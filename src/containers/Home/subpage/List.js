@@ -3,13 +3,17 @@ import './style.styl'
 import {getListData} from '../../../fetch/home/home'
 
 import ListComponent from '../../../components/List'
+import LoadMore from '../../../components/LoadMore'
 
 class List extends Component {
   constructor(props) {
     super(props)
     this.state = {
       data: [],
-      hasMore: false
+      hasMore: false,
+      isLoadingMore: false,
+      // 下一页页码
+      page: 1
     }
   }
 
@@ -24,16 +28,31 @@ class List extends Component {
     this.resultHandle(result)
   }
 
+  loadMoreData() {
+    this.setState({
+      isLoadingMore: true
+    })
+    const cityName = this.props.cityName
+    const page = this.state.page
+    const result = getListData(cityName, page)
+    this.resultHandle(result)
+
+    this.setState({
+      page: page + 1,
+      isLoadingMore: false
+    })
+  }
+
   resultHandle(result) {
     result
       .then((res) => res.json())
       .then((json) => {
         const {data, hasMore} = json
 
-        this.setState({
-          data,
+        this.setState((prevState) => ({
+          data: prevState.data.concat(data),
           hasMore
-        })
+        }))
       })
   }
 
@@ -45,6 +64,11 @@ class List extends Component {
           this.state.data.length
           ? <ListComponent data={this.state.data} />
           : <div>加载中...</div>
+        }
+        {
+          this.state.hasMore
+          ? <LoadMore isLoadingMore={this.state.isLoadingMore} loadMoreFn={this.loadMoreData.bind(this)} />
+          : null
         }
       </div>
     )
