@@ -6,54 +6,54 @@ import * as userInfoActionsFormOtherFile from '../actions/userinfo'
 import LocalStore from '../utils/localStore'
 import {CITYNAME} from '../config/localStoreKey'
 
+export default (WrappedComponent) => {
+  class App extends React.Component {
+    constructor() {
+      super()
+      this.state = {
+        initDone: false
+      }
+    }
 
-class App extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      initDone: false
+    componentDidMount() {
+      let cityName = LocalStore.getItem(CITYNAME)
+      if (cityName == null) {
+        cityName = '北京'
+      }
+      this.props.userInfoActions.updateCityName({
+        cityName: cityName
+      })
+      this.setState({
+        initDone: true
+      })
+    }
+
+    render() {
+      return (
+        <div>
+          {
+            this.state.initDone
+            ? <WrappedComponent match={this.props.match}/>
+            : <div>加载中...</div>
+          }
+        </div>
+      )
     }
   }
 
-  componentDidMount() {
-    let cityName = LocalStore.getItem(CITYNAME)
-    if (cityName == null) {
-      cityName = '北京'
+  function mapStateToProps(state) {
+  return {
     }
-    this.props.userInfoActions.updateCityName({
-      cityName: cityName
-    })
-    console.log(cityName)
-    this.setState({
-      initDone: true
-    })
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.state.initDone
-          ? this.props.children
-          : <div>加载中...</div>
-        }
-      </div>
-    )
+  function  mapDispatchToProps(dispatch) {
+    return {
+      userInfoActions: bindActionCreators(userInfoActionsFormOtherFile, dispatch)
+    }
   }
+
+  return connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
 }
-
-function mapStateToProps(state) {
-  return {
-  }
-}
-
-function  mapDispatchToProps(dispatch) {
-  return {
-    userInfoActions: bindActionCreators(userInfoActionsFormOtherFile, dispatch)
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App)

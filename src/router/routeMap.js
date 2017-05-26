@@ -19,16 +19,15 @@ class RouterMap extends Component {
   render() {
     return (
       <Router history={history}>
-        <App>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/city" component={City} />
-              <Route path="/user" component={User} />
-              <Route path="/search/:type(/:keyword)" component={Search} />
-              <Route path="/detail/:id" component={Detail} />
-              <Route component={NotFound} />
-          </Switch>
-        </App>
+        <Switch>
+          <Route exact path="/" component={App(Home)} />
+          <Route path="/city" component={App(City)} />
+          <Route path="/user" component={App(User)} />
+          <Route path="/search/:category/:keyword" component={App(Search)} />
+          <Route path="/search/:category" component={App(Search)} />
+          <Route path="/detail/:id" component={App(Detail)} />
+          <Route component={App(NotFound)} />
+        </Switch>
       </Router>
     )
   }

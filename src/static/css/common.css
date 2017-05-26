@@ -65,3 +65,7 @@ table {
 body {
   background: #eee;
 }
+
+a {
+  text-decoration: none;
+}
